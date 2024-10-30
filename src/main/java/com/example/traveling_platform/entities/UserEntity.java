@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,11 +19,6 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(nullable = false, unique = true)
-    String username;
-
-    @Column(nullable = false)
-    String name;
 
     @Column(nullable = false)
     String email;
