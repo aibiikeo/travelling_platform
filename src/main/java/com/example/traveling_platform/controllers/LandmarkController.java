@@ -1,5 +1,6 @@
 package com.example.traveling_platform.controllers;
 
+import com.example.traveling_platform.dto.SuccessDto;
 import com.example.traveling_platform.dtos.LandmarkUpdateDto;
 import com.example.traveling_platform.entities.LandmarkEntity;
 import com.example.traveling_platform.exceptions.ApiException;

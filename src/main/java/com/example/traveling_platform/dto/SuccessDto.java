@@ -1,4 +1,4 @@
-package com.example.traveling_platform.dtos;
+package com.example.traveling_platform.dto;
 
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -10,7 +10,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ErrorDto {
-    String message;
-    int statusCode;
+public class SuccessDto {
+
+    boolean success;
+
 }
