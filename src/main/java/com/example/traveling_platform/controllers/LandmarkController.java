@@ -1,7 +1,7 @@
 package com.example.traveling_platform.controllers;
 
 import com.example.traveling_platform.dto.SuccessDto;
-import com.example.traveling_platform.dtos.LandmarkUpdateDto;
+import com.example.traveling_platform.dto.LandmarkUpdateDto;
 import com.example.traveling_platform.entities.LandmarkEntity;
 import com.example.traveling_platform.exceptions.ApiException;
 import com.example.traveling_platform.repositories.LandmarkRepository;
@@ -52,7 +52,7 @@ public class LandmarkController {
     }
 
     @DeleteMapping("delete/{id}")
-    public SuccessDto delete (@PathVariable Long id) {
+    public SuccessDto delete(@PathVariable Long id) {
         LandmarkEntity landmark = landmarkRepository.findById(id).orElseThrow(() -> new ApiException("Landmark with id " + id + " is not found", HttpStatusCode.valueOf(404)));
         landmarkRepository.delete(landmark);
         return new SuccessDto(true);

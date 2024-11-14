@@ -1,6 +1,6 @@
 package com.example.traveling_platform.exceptions;
 
-import com.example.traveling_platform.dtos.ErrorDto;
+import com.example.traveling_platform.dto.ErrorDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
