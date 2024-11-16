@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Entity
 @Table(name = "bookings")
 @Getter
@@ -16,12 +18,12 @@ public class BookingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne
-    private UserEntity user;
+    @ManyToOne(fetch = FetchType.EAGER)
+    UserEntity user;
 
-    @ManyToOne
-    private TravelPlanEntity travelPlan;
+    @ManyToMany(fetch = FetchType.EAGER)
+    List<TravelPlanEntity> travelPlan;
 
-    @ManyToOne
-    private TourPlanEntity tourPlan;
+    @ManyToMany(fetch = FetchType.EAGER)
+    List<TourPlanEntity> tourPlan;
 }
