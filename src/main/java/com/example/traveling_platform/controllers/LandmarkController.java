@@ -1,14 +1,18 @@
 package com.example.traveling_platform.controllers;
 
-import com.example.traveling_platform.dto.SuccessDto;
 import com.example.traveling_platform.dto.LandmarkUpdateDto;
 import com.example.traveling_platform.entities.LandmarkEntity;
 import com.example.traveling_platform.exceptions.ApiException;
 import com.example.traveling_platform.repositories.LandmarkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/landmarks")
@@ -32,7 +36,6 @@ public class LandmarkController {
         return landmarkRepository.save(newLandmark);
     }
 
-
     @PutMapping("update/{id}")
     public LandmarkEntity update(@RequestBody LandmarkUpdateDto landmark, @PathVariable("id") Long id) {
         LandmarkEntity toUpdate = landmarkRepository.findById(id).orElseThrow(() -> new ApiException("Landmark with id " + id + " is not found", HttpStatusCode.valueOf(404)));
@@ -52,10 +55,16 @@ public class LandmarkController {
     }
 
     @DeleteMapping("delete/{id}")
-    public SuccessDto delete(@PathVariable Long id) {
-        LandmarkEntity landmark = landmarkRepository.findById(id).orElseThrow(() -> new ApiException("Landmark with id " + id + " is not found", HttpStatusCode.valueOf(404)));
-        landmarkRepository.delete(landmark);
-        return new SuccessDto(true);
+    public ResponseEntity<Map<String, Object>> delete (@PathVariable Long id) {
+        Optional<LandmarkEntity> landmark = landmarkRepository.findById(id);
+        if (landmark.isPresent()) {
+            landmarkRepository.deleteById(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Landmark with id " + id + " is deleted");
+            response.put("deleted landmark", landmark.get());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        else throw new ApiException("Landmark with id " + id + " is not found", HttpStatusCode.valueOf(404));
     }
 
 }
