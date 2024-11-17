@@ -16,5 +16,4 @@ public class TravelingPlatformApplication {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
