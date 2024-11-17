@@ -31,7 +31,7 @@ public class TravelPlanEntity {
     @Column(nullable = false)
     Double price;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     List<LandmarkEntity> landmarks;
 
 }
