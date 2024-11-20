@@ -3,7 +3,6 @@ package com.example.traveling_platform.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,7 +17,6 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
 
     @Column(nullable = false)
     String email;

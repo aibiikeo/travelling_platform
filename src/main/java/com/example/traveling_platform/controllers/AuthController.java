@@ -45,7 +45,7 @@ public class AuthController {
         }
         UserEntity user = new UserEntity();
         user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword())); // Corrected here
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         userRepository.save(user);
         return ResponseEntity.ok("User registered successfully");
     }
@@ -57,7 +57,7 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String token = jwtTokenUtil.generateToken(authentication.getName()); // Corrected here
+            String token = jwtTokenUtil.generateToken(authentication.getName());
 
             return ResponseEntity.ok(new JwtResponse(token));
         } catch (Exception e) {
