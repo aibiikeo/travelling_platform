@@ -10,12 +10,14 @@ import com.example.traveling_platform.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -41,14 +43,17 @@ public class AuthController {
     @PostMapping("/sign-up")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupDto dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
-            return ResponseEntity.badRequest().body("Email is already in use");
+            System.out.println("Email already exists");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is already in use");
         }
         UserEntity user = new UserEntity();
         user.setEmail(dto.getEmail());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         userRepository.save(user);
+        System.out.println("Email registering");
         return ResponseEntity.ok("User registered successfully");
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody SignupDto dto) {
