@@ -2,6 +2,7 @@ package com.example.traveling_platform.services;
 
 import com.example.traveling_platform.dto.UserDto;
 import com.example.traveling_platform.entities.UserEntity;
+import com.example.traveling_platform.mapper.UserMapper;
 import com.example.traveling_platform.model.UserModel;
 import com.example.traveling_platform.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -34,12 +38,6 @@ public class UserService implements UserDetailsService {
     public UserDto getUserById(Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
-
-        return UserDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .createdAt(user.getCreatedAt())
-                .password(user.getPassword())
-                .build();
+        return userMapper.userToUserDto(user);
     }
 }
