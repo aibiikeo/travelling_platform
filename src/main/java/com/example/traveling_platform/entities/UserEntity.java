@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
@@ -30,4 +31,10 @@ public class UserEntity {
     private void init() {
         this.createdAt = LocalDateTime.now();
     }
+
+    @OneToMany(fetch = FetchType.EAGER)
+    List<TravelPlanEntity> travelPlan;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    List<TourPlanEntity> tourPlan;
 }
