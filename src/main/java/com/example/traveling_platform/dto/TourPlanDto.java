@@ -9,11 +9,9 @@ import java.util.List;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TourPlanUpdateDto {
+public class TourPlanDto {
     String planName;
     LocalDateTime startDate;
     LocalDateTime endDate;
-    Double price;
     List<Long> landmarkIds;
 }
-

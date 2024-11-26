@@ -34,4 +34,13 @@ public class TravelPlanEntity {
     @ManyToMany(fetch = FetchType.EAGER)
     List<LandmarkEntity> landmarks;
 
+    public Double calculatePrice() {
+        if (landmarks == null || landmarks.isEmpty()) return 0.0;
+        double sum = landmarks.stream().mapToDouble(LandmarkEntity::getPrice).sum();
+        return sum + sum * 0.10;
+    }
+
+    public void updatePrice() {
+        this.price = calculatePrice();
+    }
 }

@@ -1,6 +1,6 @@
 package com.example.traveling_platform.controllers;
 
-import com.example.traveling_platform.dto.TravelPlanUpdateDto;
+import com.example.traveling_platform.dto.TravelPlanDto;
 import com.example.traveling_platform.entities.TravelPlanEntity;
 import com.example.traveling_platform.services.TravelPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +27,12 @@ public class TravelPlanController {
     }
 
     @PostMapping("/create")
-    public TravelPlanEntity create(@RequestBody TravelPlanEntity newTravelPlan) {
+    public TravelPlanEntity create(@RequestBody TravelPlanDto newTravelPlan) {
         return travelPlanService.create(newTravelPlan);
     }
 
     @PutMapping("update/{id}")
-    public TravelPlanEntity update(@RequestBody TravelPlanUpdateDto travelPlan, @PathVariable("id") Long id) {
+    public TravelPlanEntity update(@RequestBody TravelPlanDto travelPlan, @PathVariable("id") Long id) {
         return travelPlanService.update(travelPlan, id);
     }
 

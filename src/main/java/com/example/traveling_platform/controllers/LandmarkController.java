@@ -1,6 +1,6 @@
 package com.example.traveling_platform.controllers;
 
-import com.example.traveling_platform.dto.LandmarkUpdateDto;
+import com.example.traveling_platform.dto.LandmarkDto;
 import com.example.traveling_platform.entities.LandmarkEntity;
 import com.example.traveling_platform.services.LandmarkService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class LandmarkController {
     }
 
     @PutMapping("update/{id}")
-    public LandmarkEntity update(@RequestBody LandmarkUpdateDto landmark, @PathVariable("id") Long id) {
+    public LandmarkEntity update(@RequestBody LandmarkDto landmark, @PathVariable("id") Long id) {
         return landmarkService.update(landmark, id);
     }
 

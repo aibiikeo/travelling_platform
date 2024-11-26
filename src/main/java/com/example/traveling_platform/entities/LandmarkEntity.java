@@ -25,5 +25,8 @@ public class LandmarkEntity {
     @Column(nullable = false)
     String location;
 
+    @Column(nullable = false)
+    Double price;
+
     String imageUrl;
 }

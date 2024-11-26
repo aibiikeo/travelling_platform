@@ -1,9 +1,10 @@
 package com.example.traveling_platform.services;
 
-import com.example.traveling_platform.dto.TourPlanUpdateDto;
+import com.example.traveling_platform.dto.TourPlanDto;
 import com.example.traveling_platform.entities.LandmarkEntity;
 import com.example.traveling_platform.entities.TourPlanEntity;
 import com.example.traveling_platform.exceptions.ApiException;
+import com.example.traveling_platform.mapper.TourPlanMapper;
 import com.example.traveling_platform.repositories.LandmarkRepository;
 import com.example.traveling_platform.repositories.TourPlanRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,9 @@ public class TourPlanService {
     @Autowired
     private LandmarkRepository landmarkRepository;
 
+    @Autowired
+    private TourPlanMapper tourPlanMapper;
+
     public List<TourPlanEntity> getAll() {
         return tourPlanRepository.findAll();
     }
@@ -34,11 +38,22 @@ public class TourPlanService {
         return tourPlanRepository.findById(id).orElseThrow(() -> new ApiException("Tour plan with id " + id + " is not found", HttpStatusCode.valueOf(404)));
     }
 
-    public TourPlanEntity create(TourPlanEntity newTourPlan) {
-        return tourPlanRepository.save(newTourPlan);
+    public TourPlanEntity create(TourPlanDto newTourPlanDto) {
+        TourPlanEntity tourPlanEntity = tourPlanMapper.tourPlanDtoToTourPlan(newTourPlanDto);
+        List<Long> requestedLandmarkIds = newTourPlanDto.getLandmarkIds();
+        List<LandmarkEntity> landmarks = landmarkRepository.findAllById(requestedLandmarkIds);
+        List<Long> foundLandmarkIds = landmarks.stream().map(LandmarkEntity::getId).toList();
+        List<Long> missingIds = requestedLandmarkIds.stream().filter(id -> !foundLandmarkIds.contains(id)).toList();
+
+        if (!missingIds.isEmpty()) {
+            throw new ApiException("Landmarks with id " + missingIds + " is not found", HttpStatusCode.valueOf(404));
+        }
+        tourPlanEntity.setLandmarks(landmarks);
+        tourPlanEntity.updatePrice();
+        return tourPlanRepository.save(tourPlanEntity);
     }
 
-    public TourPlanEntity update(TourPlanUpdateDto tourPlan, Long id) {
+    public TourPlanEntity update(TourPlanDto tourPlan, Long id) {
         TourPlanEntity toUpdate = tourPlanRepository.findById(id).orElseThrow(() -> new ApiException("Tour plan with id " + id + " is not found", HttpStatusCode.valueOf(404)));
         if (tourPlan.getPlanName() != null) {
             toUpdate.setPlanName(tourPlan.getPlanName());
@@ -49,9 +64,6 @@ public class TourPlanService {
         if (tourPlan.getEndDate() != null) {
             toUpdate.setEndDate(tourPlan.getEndDate());
         }
-        if (tourPlan.getPrice() != null){
-            toUpdate.setPrice(tourPlan.getPrice());
-        }
         if (tourPlan.getLandmarkIds() != null && !tourPlan.getLandmarkIds().isEmpty()) {
             List<LandmarkEntity> currentLandmarks = toUpdate.getLandmarks();
             List<LandmarkEntity> newLandmarks = landmarkRepository.findAllById(tourPlan.getLandmarkIds());
@@ -61,6 +73,7 @@ public class TourPlanService {
                 }
             }
             toUpdate.setLandmarks(currentLandmarks);
+            toUpdate.updatePrice();
         }
         return tourPlanRepository.save(toUpdate);
     }

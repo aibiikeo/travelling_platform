@@ -1,6 +1,6 @@
 package com.example.traveling_platform.services;
 
-import com.example.traveling_platform.dto.LandmarkUpdateDto;
+import com.example.traveling_platform.dto.LandmarkDto;
 import com.example.traveling_platform.entities.LandmarkEntity;
 import com.example.traveling_platform.exceptions.ApiException;
 import com.example.traveling_platform.repositories.LandmarkRepository;
@@ -30,10 +30,13 @@ public class LandmarkService {
     }
 
     public LandmarkEntity create(LandmarkEntity newLandmark) {
+        if (newLandmark.getPrice() == null || newLandmark.getPrice() <= 0) {
+            throw new ApiException("landmark price should be greater than zero", HttpStatusCode.valueOf(400));
+        }
         return landmarkRepository.save(newLandmark);
     }
 
-    public LandmarkEntity update(LandmarkUpdateDto landmark, Long id) {
+    public LandmarkEntity update(LandmarkDto landmark, Long id) {
         LandmarkEntity toUpdate = landmarkRepository.findById(id).orElseThrow(() -> new ApiException("Landmark with id " + id + " is not found", HttpStatusCode.valueOf(404)));
         if (landmark.getTitle() != null) {
             toUpdate.setTitle(landmark.getTitle());
@@ -43,6 +46,12 @@ public class LandmarkService {
         }
         if (landmark.getLocation() != null) {
             toUpdate.setLocation(landmark.getLocation());
+        }
+        if (landmark.getPrice() != null) {
+            if (landmark.getPrice() <= 0) {
+                throw new ApiException("landmark price must be greater than zero", HttpStatusCode.valueOf(400));
+            }
+            toUpdate.setPrice(landmark.getPrice());
         }
         if (landmark.getImageUrl() != null){
             toUpdate.setImageUrl(landmark.getImageUrl());
