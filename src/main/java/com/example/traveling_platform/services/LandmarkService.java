@@ -33,6 +33,10 @@ public class LandmarkService {
         if (newLandmark.getPrice() == null || newLandmark.getPrice() <= 0) {
             throw new ApiException("landmark price should be greater than zero", HttpStatusCode.valueOf(400));
         }
+        Optional<LandmarkEntity> existingLandmark = landmarkRepository.findByTitle(newLandmark.getTitle());
+        if (existingLandmark.isPresent()) {
+            throw new ApiException("Landmark with title '" + newLandmark.getTitle() + "' already exists", HttpStatusCode.valueOf(400));
+        }
         return landmarkRepository.save(newLandmark);
     }
 
