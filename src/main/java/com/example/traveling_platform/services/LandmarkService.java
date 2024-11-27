@@ -2,8 +2,12 @@ package com.example.traveling_platform.services;
 
 import com.example.traveling_platform.dto.LandmarkDto;
 import com.example.traveling_platform.entities.LandmarkEntity;
+import com.example.traveling_platform.entities.TourPlanEntity;
+import com.example.traveling_platform.entities.TravelPlanEntity;
 import com.example.traveling_platform.exceptions.ApiException;
 import com.example.traveling_platform.repositories.LandmarkRepository;
+import com.example.traveling_platform.repositories.TourPlanRepository;
+import com.example.traveling_platform.repositories.TravelPlanRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +24,12 @@ import java.util.Optional;
 public class LandmarkService {
     @Autowired
     private LandmarkRepository landmarkRepository;
+
+    @Autowired
+    private TourPlanRepository tourPlanRepository;
+
+    @Autowired
+    private TravelPlanRepository travelPlanRepository;
 
     public List<LandmarkEntity> getAll() {
         return landmarkRepository.findAll();
@@ -66,6 +76,13 @@ public class LandmarkService {
     public ResponseEntity<Map<String, Object>> delete (Long id) {
         Optional<LandmarkEntity> landmark = landmarkRepository.findById(id);
         if (landmark.isPresent()) {
+            LandmarkEntity landmarkEntity = landmark.get();
+            List<TravelPlanEntity> travelPlans = travelPlanRepository.findAll();
+            travelPlans.forEach(plan -> plan.getLandmarks().remove(landmarkEntity));
+            travelPlanRepository.saveAll(travelPlans);
+            List<TourPlanEntity> tourPlans = tourPlanRepository.findAll();
+            tourPlans.forEach(plan -> plan.getLandmarks().remove(landmarkEntity));
+            tourPlanRepository.saveAll(tourPlans);
             landmarkRepository.deleteById(id);
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Landmark with id " + id + " is deleted");

@@ -3,10 +3,12 @@ package com.example.traveling_platform.services;
 import com.example.traveling_platform.dto.TourPlanDto;
 import com.example.traveling_platform.entities.LandmarkEntity;
 import com.example.traveling_platform.entities.TourPlanEntity;
+import com.example.traveling_platform.entities.UserEntity;
 import com.example.traveling_platform.exceptions.ApiException;
 import com.example.traveling_platform.mapper.TourPlanMapper;
 import com.example.traveling_platform.repositories.LandmarkRepository;
 import com.example.traveling_platform.repositories.TourPlanRepository;
+import com.example.traveling_platform.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,9 @@ public class TourPlanService {
 
     @Autowired
     private LandmarkRepository landmarkRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private TourPlanMapper tourPlanMapper;
@@ -81,6 +86,10 @@ public class TourPlanService {
     public ResponseEntity<Map<String, Object>> delete(Long id) {
         Optional<TourPlanEntity> tourPlan = tourPlanRepository.findById(id);
         if (tourPlan.isPresent()) {
+            TourPlanEntity tourPlanEntity = tourPlan.get();
+            List<UserEntity> users = userRepository.findAll();
+            users.forEach(user -> user.getTourPlan().remove(tourPlanEntity));
+            userRepository.saveAll(users);
             tourPlanRepository.deleteById(id);
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Tour plan with id " + id + " is deleted");

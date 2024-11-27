@@ -3,17 +3,18 @@ package com.example.traveling_platform.services;
 import com.example.traveling_platform.dto.TravelPlanDto;
 import com.example.traveling_platform.entities.LandmarkEntity;
 import com.example.traveling_platform.entities.TravelPlanEntity;
+import com.example.traveling_platform.entities.UserEntity;
 import com.example.traveling_platform.exceptions.ApiException;
 import com.example.traveling_platform.mapper.TravelPlanMapper;
 import com.example.traveling_platform.repositories.LandmarkRepository;
 import com.example.traveling_platform.repositories.TravelPlanRepository;
+import com.example.traveling_platform.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,9 @@ public class TravelPlanService {
 
     @Autowired
     private LandmarkRepository landmarkRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private TravelPlanMapper travelPlanMapper;
@@ -86,6 +90,10 @@ public class TravelPlanService {
     public ResponseEntity<Map<String, Object>> delete(Long id) {
         Optional<TravelPlanEntity> travelPlan = travelPlanRepository.findById(id);
         if (travelPlan.isPresent()) {
+            TravelPlanEntity travelPlanEntity = travelPlan.get();
+            List<UserEntity> users = userRepository.findAll();
+            users.forEach(user -> user.getTravelPlan().remove(travelPlanEntity));
+            userRepository.saveAll(users);
             travelPlanRepository.deleteById(id);
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Travel plan with id " + id + " is deleted");
