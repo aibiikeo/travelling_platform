@@ -25,6 +25,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/trusted/auth")
 @RequiredArgsConstructor
@@ -69,10 +71,14 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody SignupDto dto) {
-        UserEntity user = userRepository.findByEmail(dto.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        UserEntity user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         if (!user.isVerified()) {
-            return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("verify your email before logging in");
+            return ResponseEntity.status(HttpStatusCode.valueOf(401))
+                    .body("Verify your email before logging in");
         }
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
@@ -80,16 +86,35 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String token = jwtTokenUtil.generateToken(authentication.getName());
 
-            return ResponseEntity.ok(new JwtResponse(token));
+            // Return token and email
+            return ResponseEntity.ok(new JwtResponse(token, user.getEmail()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Invalid username or password");
         }
     }
 
+
     @GetMapping("/user/{id}")
     public UserDto getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
+
+
+    @GetMapping("/user/id-by-email")
+    public ResponseEntity<?> getUserIdByEmail(@RequestParam String email) {
+        log.info("Fetching user ID for email: {}", email);
+        Optional<UserEntity> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isEmpty()) {
+            log.warn("User not found for email: {}", email);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        UserEntity user = userOptional.get();
+        log.info("Found user ID: {}", user.getId());
+        return ResponseEntity.ok(user.getId());
+    }
+
 
     @GetMapping("/verify-email")
     public ResponseEntity<?> verifyEmail(@RequestParam String token) {
