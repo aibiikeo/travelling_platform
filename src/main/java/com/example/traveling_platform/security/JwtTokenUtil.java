@@ -44,7 +44,7 @@ public class JwtTokenUtil {
     public String generateVerificationToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
-                .setExpiration(new Date(System.currentTimeMillis() + 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
                 .signWith(SignatureAlgorithm.HS256, verificationKey)
                 .compact();
     }
