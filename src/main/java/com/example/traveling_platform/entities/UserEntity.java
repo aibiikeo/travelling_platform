@@ -37,4 +37,6 @@ public class UserEntity {
 
     @ManyToMany(fetch = FetchType.EAGER)
     List<TourPlanEntity> tourPlan;
+
+    boolean verified = false;
 }

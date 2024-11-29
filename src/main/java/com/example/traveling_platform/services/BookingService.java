@@ -38,13 +38,6 @@ public class BookingService {
     @Autowired
     private LandmarkRepository landmarkRepository;
 
-//    public void addTravelPlan(Long userId, TravelPlanEntity travelPlan) {
-//        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new ApiException("User with id " + userId + " is not found", HttpStatusCode.valueOf(404)));
-//        travelPlanRepository.save(travelPlan);
-//        user.getTravelPlan().add(travelPlan);
-//        userRepository.save(user);
-//    }
-
     public void addTravelPlan(Long userId, TravelPlanDto travelPlanDto) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApiException("User with id " + userId + " is not found", HttpStatusCode.valueOf(404)));
